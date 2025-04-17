@@ -1,3 +1,4 @@
+#include "pins_arduino.h"
 /*
   SOLUTION 1 - PROJET RUCHE >> JACOPE Jules & JELITI Mehdi - BTS CIEL - 2024/2025
 
@@ -10,22 +11,17 @@
 
 #include "sd_perso.h"
 
-#define REASSIGN_PINS
-int sck_sd = 14;
-int miso_sd = 2;
-int mosi_sd = 15;
-int cs_sd = 13;
+SPIClass spiSD(HSPI);
+#define SCK_SD 14
+#define MISO_SD 2
+#define MOSI_SD 15
+#define CS_SD 13
 
 sd_perso::sd_perso() {}
 
 void sd_perso::start() {
-
-#ifdef REASSIGN_PINS
-  SPI.begin(sck_sd, miso_sd, mosi_sd, cs_sd);
-  if (!SD.begin(cs_sd)) {
-#else
-  if (!SD.begin()) {
-#endif
+  spiSD.begin(SCK_SD, MISO_SD, MOSI_SD, CS_SD); //sd
+  if (!SD.begin(CS_SD, spiSD)) {
     Serial.println("Echec lors du montage de la SD");
     return;
   }

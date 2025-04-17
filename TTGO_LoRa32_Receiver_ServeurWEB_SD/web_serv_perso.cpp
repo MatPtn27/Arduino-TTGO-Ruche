@@ -9,6 +9,7 @@
 //WiFi
 #include <WiFi.h>
 #include <WebServer.h>
+#include "LittleFS.h"
 
 //OLED
 #include <Wire.h>
@@ -22,11 +23,12 @@
 #include "sd_perso.h"
 
 // Remplacez par vos informations de réseau Wi-Fi
-const char* ssid = "Box_Wifi_2.0";
-const char* password = "nopememepasenreve";
+const char* ssid = "SFR_524F";
+const char* password = "x367xxqkfwitxwk24e6c";
 
 WebServer server(80);
 web_serv::web_serv() {}
+
 
 void handleRoot(){
   // Lecture du fichier index.html depuis la carte SD
@@ -65,6 +67,27 @@ void web_serv::start_wifi_v1() {
 }
 
 void web_serv::start_web(){
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(LittleFS, "/index.html", String(), false, processor);
+  });
+  server.on("/temperature", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(200, "text/plain", temperature.c_str());
+  });
+  server.on("/humidity", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(200, "text/plain", humidity.c_str());
+  });
+  server.on("/pressure", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(200, "text/plain", pressure.c_str());
+  });
+  server.on("/timestamp", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(200, "text/plain", timestamp.c_str());
+  });
+  server.on("/rssi", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(200, "text/plain", String(rssi).c_str());
+  });
+  server.on("/winter", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(LittleFS, "/winter.jpg", "image/jpg");
+  });
   server.on("/", handleRoot);  // Route pour la page d'accueil
   server.begin();
   Serial.println("Serveur web démarré");

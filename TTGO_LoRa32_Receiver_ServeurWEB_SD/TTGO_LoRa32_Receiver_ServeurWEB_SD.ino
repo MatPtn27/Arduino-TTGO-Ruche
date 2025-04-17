@@ -18,8 +18,8 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
 
-  lorap.start();
   sdp.start();
+  lorap.start();
   webp.start_wifi_v1();
   webp.start_web();
 }
